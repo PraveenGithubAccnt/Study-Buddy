@@ -305,7 +305,7 @@ const updateUserProfile = async (req, res) => {
     });
   }
 };
-// 🔄 FORGOT PASSWORD 
+//Forgot Password Controller
 
 const forgotPassword = async (req, res) => {
   try {
