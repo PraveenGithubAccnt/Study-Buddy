@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const API_BASE_URL = 'http://192.168.29.93:3000/api/auth'; 
-// For emulator: http://10.0.2.2:3000/api/auth
+const API_BASE_URL = 'https://study-buddy-production-69c4.up.railway.app/api/auth'; 
+
 
 // 🔧 Enhanced Generic API call with detailed logging
 const apiCall = async (endpoint, options = {}) => {
