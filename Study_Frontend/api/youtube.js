@@ -1,7 +1,7 @@
 // api/youtube.js
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const API_BASE_URL = 'http://192.168.29.93:3000/api/youtube';
+const API_BASE_URL = 'https://study-buddy-production-69c4.up.railway.app/api/youtube';
 
 const youtubeApiCall = async (endpoint, options = {}) => {
   const url = `${API_BASE_URL}${endpoint}`;
