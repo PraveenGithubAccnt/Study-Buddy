@@ -305,12 +305,10 @@ const updateUserProfile = async (req, res) => {
     });
   }
 };
-// 🔄 FORGOT PASSWORD - Add this function to your authcontroller.js
+//Forgot Password Controller
 
-// 🔄 SIMPLIFIED FORGOT PASSWORD CONTROLLER
 const forgotPassword = async (req, res) => {
   try {
-    // Check for validation errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({
@@ -322,25 +320,59 @@ const forgotPassword = async (req, res) => {
 
     const { email } = req.body;
 
-    // Check if user exists in Firestore first (optional but good UX)
-    const usersRef = firestore.collection('users');
-    const snapshot = await usersRef.where('email', '==', email).get();
+    // Use Firebase REST API to send reset email
+    const firebaseApiKey = process.env.FIREBASE_WEB_API_KEY;
     
-    if (snapshot.empty) {
-      // For security, we don't reveal if email exists or not
-      // But we still return success to prevent email enumeration
-      return res.status(200).json({
-        success: true,
-        message: 'If an account with that email exists, we have sent a password reset email.'
+    if (!firebaseApiKey) {
+      return res.status(500).json({
+        success: false,
+        message: 'Firebase configuration error'
       });
     }
 
-    // Simply send password reset email using Firebase Admin SDK
-    // Firebase will handle the email template and reset page automatically
-    await auth.generatePasswordResetLink(email);
+    const resetResponse = await fetch(
+      `https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=${firebaseApiKey}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          requestType: 'PASSWORD_RESET',
+          email: email,
+        }),
+      }
+    );
 
-    // Optional: Log the reset request for tracking
-    console.log(`🔄 Password reset email sent to: ${email}`);
+    const resetData = await resetResponse.json();
+    console.log('Firebase reset response:', resetData);
+
+    if (!resetResponse.ok) {
+      let errorMessage = 'Failed to send reset email';
+      
+      if (resetData.error) {
+        switch (resetData.error.message) {
+          case 'EMAIL_NOT_FOUND':
+            errorMessage = 'No account found with this email address';
+            break;
+          case 'INVALID_EMAIL':
+            errorMessage = 'Invalid email address';
+            break;
+          case 'TOO_MANY_ATTEMPTS_TRY_LATER':
+            errorMessage = 'Too many attempts. Please try again later.';
+            break;
+          default:
+            errorMessage = resetData.error.message;
+        }
+      }
+
+      return res.status(400).json({
+        success: false,
+        message: errorMessage
+      });
+    }
+
+    console.log(`Password reset email sent to: ${email}`);
 
     res.status(200).json({
       success: true,
@@ -349,26 +381,9 @@ const forgotPassword = async (req, res) => {
 
   } catch (error) {
     console.error('Forgot password error:', error);
-
-    // Handle specific Firebase errors
-    let errorMessage = 'Failed to send reset email. Please try again.';
-    
-    if (error.code === 'auth/user-not-found') {
-      // For security, still return success but log the attempt
-      console.log(`⚠️ Password reset attempted for non-existent email: ${req.body.email}`);
-      return res.status(200).json({
-        success: true,
-        message: 'If an account with that email exists, we have sent a password reset email.'
-      });
-    } else if (error.code === 'auth/invalid-email') {
-      errorMessage = 'Please provide a valid email address.';
-    } else if (error.code === 'auth/too-many-requests') {
-      errorMessage = 'Too many password reset requests. Please try again later.';
-    }
-
-    res.status(400).json({
+    res.status(500).json({
       success: false,
-      message: errorMessage
+      message: 'Failed to send reset email. Please try again.'
     });
   }
 };
