@@ -7,20 +7,28 @@ const {
   loginUser,
   getUserProfile,
   logoutUser,
-  updateUserProfile  // 🔥 NEW: Add this
+  updateUserProfile,
+  forgotPassword  // 🔥 NEW: Add this
 } = require('../controllers/authcontroller');
 
 // Import middleware
 const { verifyToken } = require('../middleware/authmiddleware');
 
 // Import validation
-const { validateRegistration, validateLogin } = require('../utils/authvalidation');
+const { 
+  validateRegistration, 
+  validateLogin,
+  validateForgotPassword  // 🔥 NEW: Add this
+} = require('../utils/authvalidation');
 
 // 📝 POST /api/auth/register - Register a new user
 router.post('/register', validateRegistration, registerUser);
 
 // 🔐 POST /api/auth/login - Login user
 router.post('/login', validateLogin, loginUser);
+
+// 🔄 POST /api/auth/forgot-password - Send password reset email
+router.post('/forgot-password', validateForgotPassword, forgotPassword);
 
 // 👤 GET /api/auth/profile - Get user profile (Protected)
 router.get('/profile', verifyToken, getUserProfile);

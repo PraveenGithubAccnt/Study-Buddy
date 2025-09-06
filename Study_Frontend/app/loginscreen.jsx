@@ -81,6 +81,7 @@ const LoginScreen = () => {
 
           <TextInput
             placeholder="Email"
+            placeholderTextColor="#9CA3AF" 
             value={email}
             onChangeText={setEmail}
             autoCapitalize="none"
@@ -92,6 +93,7 @@ const LoginScreen = () => {
           <View className="relative mb-6">
             <TextInput
               placeholder="Password"
+              placeholderTextColor="#9CA3AF" 
               value={password}
               onChangeText={setPassword}
               secureTextEntry={!showPassword}
@@ -122,9 +124,21 @@ const LoginScreen = () => {
             </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => router.push("/registerscreen")} disabled={loading}>
+          <TouchableOpacity
+            onPress={() => router.push("/registerscreen")}
+            disabled={loading}
+          >
             <Text className="text-center text-blue-600 underline">
               Don't have an account? Register
+            </Text>
+          </TouchableOpacity>
+
+           <TouchableOpacity className="mt-4"
+            onPress={() => router.push("/forgotpwd")}
+            disabled={loading}
+          >
+            <Text className="text-center text-blue-600 underline">
+              Forgot Password?
             </Text>
           </TouchableOpacity>
         </ScrollView>
