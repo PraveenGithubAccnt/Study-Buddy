@@ -100,6 +100,34 @@ export const loginUser = async (email, password) => {
   }
 };
 
+// 🔄 Send Password Reset Email
+export const sendPasswordResetEmail = async (email) => {
+  try {
+    console.log('🔄 Sending password reset email to:', email);
+    
+    const response = await apiCall('/forgot-password', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    });
+
+    console.log('✅ Password reset email sent successfully');
+    return response;
+  } catch (error) {
+    console.error('❌ Password reset error:', error);
+    
+    // Handle specific error cases for better UX
+    if (error.message?.includes('user-not-found')) {
+      throw new Error('No account found with this email address.');
+    } else if (error.message?.includes('invalid-email')) {
+      throw new Error('Please enter a valid email address.');
+    } else if (error.message?.includes('too-many-requests')) {
+      throw new Error('Too many requests. Please try again later.');
+    }
+    
+    throw error;
+  }
+};
+
 // 👤 Get User Profile
 export const getUserProfile = async () => {
   try {

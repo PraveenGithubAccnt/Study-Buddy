@@ -15,7 +15,7 @@ import { useRouter } from "expo-router";
 import { Feather } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { registerUser } from "../api/firebaseauth";
-import { CLOUDINARY_CLOUD_NAME, CLOUDINARY_UPLOAD_PRESET } from '@env'; // Keep this import
+import { CLOUDINARY_CLOUD_NAME, CLOUDINARY_UPLOAD_PRESET } from "@env"; // Keep this import
 
 const RegisterScreen = () => {
   const router = useRouter();
@@ -70,26 +70,25 @@ const RegisterScreen = () => {
         profileImage: profileImage,
         cloudinaryConfig: {
           cloudName: CLOUDINARY_CLOUD_NAME,
-          uploadPreset: CLOUDINARY_UPLOAD_PRESET
-        }
+          uploadPreset: CLOUDINARY_UPLOAD_PRESET,
+        },
       });
 
-      console.log('✅ Registration successful:', response.data.user);
+      console.log("✅ Registration successful:", response.data.user);
 
       // Show success message
       Alert.alert(
-        "Success! 🎉", 
+        "Success! 🎉",
         "Account created successfully! You can now login.",
         [
           {
             text: "OK",
-            onPress: () => router.replace("/loginscreen")
-          }
+            onPress: () => router.replace("/loginscreen"),
+          },
         ]
       );
-
     } catch (err) {
-      console.error('❌ Registration failed:', err);
+      console.error("❌ Registration failed:", err);
       setError(err.message || "Registration failed. Please try again.");
     } finally {
       setLoading(false);
@@ -143,6 +142,7 @@ const RegisterScreen = () => {
           {/* Full Name */}
           <TextInput
             placeholder="Full Name"
+            placeholderTextColor="#9CA3AF"
             value={name}
             onChangeText={setFullname}
             className="bg-gray-100 text-gray-800 rounded-xl px-4 py-3 mb-4 border border-gray-300"
@@ -152,6 +152,7 @@ const RegisterScreen = () => {
           {/* Email */}
           <TextInput
             placeholder="Email"
+            placeholderTextColor="#9CA3AF"
             value={email}
             onChangeText={setEmail}
             autoCapitalize="none"
@@ -164,6 +165,7 @@ const RegisterScreen = () => {
           <View className="relative mb-4">
             <TextInput
               placeholder="Password"
+              placeholderTextColor="#9CA3AF"
               secureTextEntry={!showPassword}
               value={password}
               onChangeText={setPassword}
@@ -186,6 +188,7 @@ const RegisterScreen = () => {
           <View className="relative mb-6">
             <TextInput
               placeholder="Confirm Password"
+              placeholderTextColor="#9CA3AF"
               secureTextEntry={!showConfirm}
               value={confirmPassword}
               onChangeText={setConfirmPassword}
@@ -209,16 +212,16 @@ const RegisterScreen = () => {
             onPress={handleRegister}
             disabled={loading}
             className={`py-3 rounded-xl shadow-md mb-4 ${
-              loading ? 'bg-gray-400' : 'bg-blue-600'
+              loading ? "bg-gray-400" : "bg-blue-600"
             }`}
           >
             <Text className="text-white font-semibold text-center text-lg">
-              {loading ? '⏳ Creating Account...' : 'Register'}
+              {loading ? "⏳ Creating Account..." : "Register"}
             </Text>
           </TouchableOpacity>
 
           {/* Already have account */}
-          <TouchableOpacity 
+          <TouchableOpacity
             onPress={() => router.push("/loginscreen")}
             disabled={loading}
           >

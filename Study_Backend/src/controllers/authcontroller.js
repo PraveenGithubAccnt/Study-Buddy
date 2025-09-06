@@ -305,11 +305,79 @@ const updateUserProfile = async (req, res) => {
     });
   }
 };
+// 🔄 FORGOT PASSWORD - Add this function to your authcontroller.js
+
+// 🔄 SIMPLIFIED FORGOT PASSWORD CONTROLLER
+const forgotPassword = async (req, res) => {
+  try {
+    // Check for validation errors
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Validation failed',
+        errors: errors.array()
+      });
+    }
+
+    const { email } = req.body;
+
+    // Check if user exists in Firestore first (optional but good UX)
+    const usersRef = firestore.collection('users');
+    const snapshot = await usersRef.where('email', '==', email).get();
+    
+    if (snapshot.empty) {
+      // For security, we don't reveal if email exists or not
+      // But we still return success to prevent email enumeration
+      return res.status(200).json({
+        success: true,
+        message: 'If an account with that email exists, we have sent a password reset email.'
+      });
+    }
+
+    // Simply send password reset email using Firebase Admin SDK
+    // Firebase will handle the email template and reset page automatically
+    await auth.generatePasswordResetLink(email);
+
+    // Optional: Log the reset request for tracking
+    console.log(`🔄 Password reset email sent to: ${email}`);
+
+    res.status(200).json({
+      success: true,
+      message: 'Password reset email sent successfully. Please check your inbox.',
+    });
+
+  } catch (error) {
+    console.error('Forgot password error:', error);
+
+    // Handle specific Firebase errors
+    let errorMessage = 'Failed to send reset email. Please try again.';
+    
+    if (error.code === 'auth/user-not-found') {
+      // For security, still return success but log the attempt
+      console.log(`⚠️ Password reset attempted for non-existent email: ${req.body.email}`);
+      return res.status(200).json({
+        success: true,
+        message: 'If an account with that email exists, we have sent a password reset email.'
+      });
+    } else if (error.code === 'auth/invalid-email') {
+      errorMessage = 'Please provide a valid email address.';
+    } else if (error.code === 'auth/too-many-requests') {
+      errorMessage = 'Too many password reset requests. Please try again later.';
+    }
+
+    res.status(400).json({
+      success: false,
+      message: errorMessage
+    });
+  }
+};
 
 module.exports = {
   registerUser,
   loginUser,
   getUserProfile,
   logoutUser,
-  updateUserProfile 
+  updateUserProfile,
+  forgotPassword 
 };
