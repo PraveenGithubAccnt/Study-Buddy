@@ -77,7 +77,7 @@ const parseQuizResponse = (aiResponse) => {
       questions.push(currentQuestion);
     }
 
-    console.log("Parsed Questions:", questions);
+    // console.log("Parsed Questions:", questions);
     return questions;
   } catch (error) {
     console.error("Error parsing quiz response:", error);
