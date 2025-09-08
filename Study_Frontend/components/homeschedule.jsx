@@ -1,4 +1,3 @@
-// components/StudyScheduleForm.jsx
 import { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Alert } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";

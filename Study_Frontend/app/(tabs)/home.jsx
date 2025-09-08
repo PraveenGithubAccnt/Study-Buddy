@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { ScrollView, ActivityIndicator, View, Alert } from "react-native";
 import { isAuthenticated } from "../../api/firebaseauth";
-import { createSchedule, getUpcomingTasks } from "../../api/schedulefetch"; // 👈 Import your new functions
+import { createSchedule, getUpcomingTasks } from "../../api/schedulefetch";
 import { registerForPushNotificationsAsync, scheduleTaskNotification } from "../../api/notification";
 
-// --- Import Components ---
+import { useRouter } from "expo-router";
 import Header from "../../components/homeheader";
 import ProgressCard from "../../components/homeprogresscard";
 import QuickActions from "../../components/homequickactionbtn";
@@ -15,7 +15,7 @@ export default function Home() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
-
+   const router = useRouter();
   // --- State for tasks ---
   const [tasks, setTasks] = useState([]);
   const [tasksLoading, setTasksLoading] = useState(true);
@@ -56,10 +56,20 @@ export default function Home() {
   };
 
   const handleActionPress = (action) => {
-    if (action === "Create Schedule") {
+    if (action === "Create Schedule") 
+      {
       setShowForm(true);
-    } else {
-      console.log("Action pressed:", action);
+    } 
+     else if (action === "AI Doubt Solver") {
+    router.push("/aidoubtsolver"); 
+  } 
+    else if (action === "Find Notes & Videos") 
+      { router.push("/study"); 
+  } else if (action === "Take Quiz") {
+    router.push("/aiquiz");
+   } 
+else {
+    console.log("Action pressed:", action);
     }
   };
 

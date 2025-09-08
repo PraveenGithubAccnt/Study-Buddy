@@ -90,7 +90,7 @@ const ForgotPasswordScreen = () => {
               Forgot Password?
             </Text>
             <Text className="text-gray-500 text-center leading-6">
-              No worries! Enter your email address and we'll send you a link to reset your password.
+              No worries! Enter your registered email address and we'll send you a link to reset your password.
             </Text>
           </View>
 
