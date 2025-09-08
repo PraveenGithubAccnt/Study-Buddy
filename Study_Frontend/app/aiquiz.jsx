@@ -50,7 +50,6 @@ const parseQuizResponse = (aiResponse) => {
           answer: null,
         };
       }
-      // Detect option (A) B) C) D))
       else if (trimmedLine.match(/^[A-D]\)/) && currentQuestion) {
         const optionText = trimmedLine.replace(/^[A-D]\)\s*/, "");
         currentQuestion.options.push(optionText);
@@ -60,7 +59,7 @@ const parseQuizResponse = (aiResponse) => {
         trimmedLine.toLowerCase().includes("answer:") &&
         currentQuestion
       ) {
-        const answerMatch = trimmedLine.match(/answer:\s*([A-D])/i);
+        const answerMatch = trimmedLine.match(/answer:\s*\[?([A-D])\]?/i);
         if (answerMatch && currentQuestion.options.length > 0) {
           const answerIndex = answerMatch[1].toUpperCase().charCodeAt(0) - 65;
           if (
@@ -78,7 +77,7 @@ const parseQuizResponse = (aiResponse) => {
       questions.push(currentQuestion);
     }
 
-    console.log("Parsed Questions:", questions);
+    // console.log("Parsed Questions:", questions);
     return questions;
   } catch (error) {
     console.error("Error parsing quiz response:", error);
@@ -199,8 +198,7 @@ const QuizQuestions = ({
             marginTop: 16,
           }}
         >
-          No questions could be generated. Please try again with different
-          inputs.
+          No questions could be generated. Please try again with different inputs.
         </Text>
       </View>
     );
@@ -366,6 +364,7 @@ export default function QuizPractice() {
           "No Questions Generated",
           "Could not generate questions for this topic. Please try different inputs."
         );
+        setLoading(false);
         return;
       }
 
@@ -399,9 +398,10 @@ export default function QuizPractice() {
       return;
     }
 
-    // Calculate score
+   
     let correctAnswers = 0;
     questions.forEach((q) => {
+      // Ensure answer strings match exactly
       if (selectedAnswers[q.id] === q.answer) {
         correctAnswers++;
       }
@@ -646,9 +646,8 @@ export default function QuizPractice() {
               </Text>
             </View>
             <Text style={{ fontSize: 14, color: "#6B7280", lineHeight: 20 }}>
-              Our AI will create personalized quiz questions based on your
-              inputs. Be specific with your topic for better, more targeted
-              questions.
+              Our AI will create personalized quiz questions based on your inputs.
+              Be specific with your topic for better, more targeted questions.
             </Text>
           </View>
         </ScrollView>
