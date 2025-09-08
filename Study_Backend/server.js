@@ -107,6 +107,7 @@ Available Endpoints:
 ✅ POST /api/googleai/explain    - Get AI explanation of a topic
 ✅ POST /api/googleai/chat       - Chat with AI tutor
 ✅ POST /api/googleai/notes      - Generate study notes
+✅ POST /api/googleai/quiz       - Generate quiz questions
 
 📄 PDF Features:
 ✅ POST /api/pdf/search     - Basic PDF search by query

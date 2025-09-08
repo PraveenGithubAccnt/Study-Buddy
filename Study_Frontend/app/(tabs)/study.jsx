@@ -8,6 +8,7 @@ import {
   SafeAreaView,
   ActivityIndicator,
   Alert,
+  RefreshControl,
 } from "react-native";
 import AINotes from "../../components/studyaians";
 import VideoList from "../../components/studyvideolist";
@@ -26,6 +27,9 @@ export default function StudyScreen() {
   const [aiLoading, setAiLoading] = useState(false);
   const [videoLoading, setVideoLoading] = useState(false);
   const [notesLoading, setNotesLoading] = useState(false);
+
+  // 🔹 For pull-to-refresh
+  const [refreshing, setRefreshing] = useState(false);
 
   const handleSearch = async () => {
     if (!query.trim()) return;
@@ -71,9 +75,18 @@ export default function StudyScreen() {
     }
   };
 
-  const cleanNotes = typeof aiNotes === "string"
-  ? aiNotes.replace(/\*\*|\*|#+/g, (match) => (match === "*" ? "-" : "")).trim()
-  : "";
+  // 🔹 Refresh handler
+  const onRefresh = async () => {
+    if (!query.trim()) return; // only refresh if query exists
+    setRefreshing(true);
+    await handleSearch();
+    setRefreshing(false);
+  };
+
+  const cleanNotes =
+    typeof aiNotes === "string"
+      ? aiNotes.replace(/\*\*|\*|#+/g, (match) => (match === "*" ? "-" : "")).trim()
+      : "";
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -98,7 +111,13 @@ export default function StudyScreen() {
         </TouchableOpacity>
       </View>
 
-      <ScrollView className="flex-1 bg-white p-4">
+      {/* Content with Pull-to-Refresh */}
+      <ScrollView
+        className="flex-1 bg-white p-4"
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
         {/* AI Notes */}
         <View className="mt-4 p-4 bg-blue-50 rounded-xl shadow min-h-[180px]">
           <Text className="text-lg font-semibold mb-2">Topic Notes</Text>
