@@ -6,22 +6,19 @@ export default function ProgressCard({ progress }) {
   const pieData = [
     {
       value: progress * 100,
-      color: '#2563eb', // Blue color (matching your original color)
+      color: '#2563eb', 
       gradientCenterColor: '#3b82f6',
     },
     {
       value: (1 - progress) * 100,
-      color: '#e5e7eb', // Light gray for remaining portion
+      color: '#e5e7eb', 
       gradientCenterColor: '#f3f4f6',
     }
   ];
 
   return (
     <View className="bg-white rounded-xl shadow items-center p-4">
-      {/* Title */}
       <Text className="text-lg font-semibold mb-3">Study Progress</Text>
-
-      {/* Progress Circle */}
       <View className="relative items-center justify-center">
         <PieChart
           donut
