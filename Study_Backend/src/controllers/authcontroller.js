@@ -305,11 +305,94 @@ const updateUserProfile = async (req, res) => {
     });
   }
 };
+//Forgot Password Controller
+
+const forgotPassword = async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Validation failed',
+        errors: errors.array()
+      });
+    }
+
+    const { email } = req.body;
+
+    // Use Firebase REST API to send reset email
+    const firebaseApiKey = process.env.FIREBASE_WEB_API_KEY;
+    
+    if (!firebaseApiKey) {
+      return res.status(500).json({
+        success: false,
+        message: 'Firebase configuration error'
+      });
+    }
+
+    const resetResponse = await fetch(
+      `https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=${firebaseApiKey}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          requestType: 'PASSWORD_RESET',
+          email: email,
+        }),
+      }
+    );
+
+    const resetData = await resetResponse.json();
+    console.log('Firebase reset response:', resetData);
+
+    if (!resetResponse.ok) {
+      let errorMessage = 'Failed to send reset email';
+      
+      if (resetData.error) {
+        switch (resetData.error.message) {
+          case 'EMAIL_NOT_FOUND':
+            errorMessage = 'No account found with this email address';
+            break;
+          case 'INVALID_EMAIL':
+            errorMessage = 'Invalid email address';
+            break;
+          case 'TOO_MANY_ATTEMPTS_TRY_LATER':
+            errorMessage = 'Too many attempts. Please try again later.';
+            break;
+          default:
+            errorMessage = resetData.error.message;
+        }
+      }
+
+      return res.status(400).json({
+        success: false,
+        message: errorMessage
+      });
+    }
+
+    console.log(`Password reset email sent to: ${email}`);
+
+    res.status(200).json({
+      success: true,
+      message: 'Password reset email sent successfully. Please check your inbox.',
+    });
+
+  } catch (error) {
+    console.error('Forgot password error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to send reset email. Please try again.'
+    });
+  }
+};
 
 module.exports = {
   registerUser,
   loginUser,
   getUserProfile,
   logoutUser,
-  updateUserProfile 
+  updateUserProfile,
+  forgotPassword 
 };

@@ -54,3 +54,13 @@ export const generateStudyNotes = async (topic, subject, noteType = 'summary') =
 
   return typeof result.notes === 'string' ? result.notes : '';
 };
+
+// 🚀 Generate Quiz Questions
+export const generateQuizQuestions = async (subject, topic, subtopic, difficulty) => {
+  const result = await googleAiCall('/quiz', {
+    method: 'POST',
+    body: JSON.stringify({ subject, topic, subtopic, difficulty }),
+  });
+  return typeof result.quiz === 'string' ? result.quiz : '';
+};
+

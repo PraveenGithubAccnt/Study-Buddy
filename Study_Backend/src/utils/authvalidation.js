@@ -36,7 +36,18 @@ const validateLogin = [
     .withMessage('Password is required')
 ];
 
+// 🔄 Forgot Password validation rules
+const validateForgotPassword = [
+  body('email')
+    .isEmail()
+    .withMessage('Please provide a valid email address')
+    .normalizeEmail()
+    .notEmpty()
+    .withMessage('Email is required')
+];
+
 module.exports = {
   validateRegistration,
-  validateLogin
+  validateLogin,
+  validateForgotPassword
 };

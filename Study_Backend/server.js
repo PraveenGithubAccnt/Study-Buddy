@@ -94,6 +94,8 @@ Available Endpoints:
 ✅ GET  /api/auth/profile        - Get profile (Protected)
 ✅ POST /api/auth/logout         - Logout user (Protected)
 ✅ GET  /api/auth/verify         - Verify token (Protected)
+✅ PUT  /api/auth/update-profile - Update profile (Protected)
+✅ POST /api/auth/forgot-password - Send password reset email
 
 🎯 Task schedule Features:
 ✅ GET  /api/tasks               - Get upcoming tasks (Protected)
@@ -105,6 +107,7 @@ Available Endpoints:
 ✅ POST /api/googleai/explain    - Get AI explanation of a topic
 ✅ POST /api/googleai/chat       - Chat with AI tutor
 ✅ POST /api/googleai/notes      - Generate study notes
+✅ POST /api/googleai/quiz       - Generate quiz questions
 
 📄 PDF Features:
 ✅ POST /api/pdf/search     - Basic PDF search by query

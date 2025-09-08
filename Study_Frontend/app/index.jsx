@@ -1,4 +1,3 @@
-//index main screen
 import {
   View,
   Text,
@@ -7,7 +6,7 @@ import {
   StatusBar,
   TouchableOpacity,
 } from "react-native";
-import { useRouter, Link } from "expo-router";
+import { useRouter } from "expo-router";
 
 export default function LandingScreen() {
   const router = useRouter();
@@ -54,19 +53,6 @@ export default function LandingScreen() {
               </Text>
             </TouchableOpacity>
           </View>
-
-          <Link
-            href="/network-debug"
-            style={{
-              marginTop: 20,
-              padding: 10,
-              backgroundColor: "#f0f0f0",
-              textAlign: "center",
-              borderRadius: 5,
-            }}
-          >
-            <Text>🔧 Network Debug</Text>
-          </Link>
         </View>
       </SafeAreaView>
     </View>

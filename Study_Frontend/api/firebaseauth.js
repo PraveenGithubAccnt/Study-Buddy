@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const API_BASE_URL = 'http://192.168.29.93:3000/api/auth'; 
-// For emulator: http://10.0.2.2:3000/api/auth
+const API_BASE_URL = 'https://study-buddy-production-69c4.up.railway.app/api/auth'; 
+
 
 // 🔧 Enhanced Generic API call with detailed logging
 const apiCall = async (endpoint, options = {}) => {
@@ -96,6 +96,34 @@ export const loginUser = async (email, password) => {
     return response;
   } catch (error) {
     console.error('❌ Login error:', error);
+    throw error;
+  }
+};
+
+// 🔄 Send Password Reset Email
+export const sendPasswordResetEmail = async (email) => {
+  try {
+    console.log('🔄 Sending password reset email to:', email);
+    
+    const response = await apiCall('/forgot-password', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    });
+
+    console.log('✅ Password reset email sent successfully');
+    return response;
+  } catch (error) {
+    console.error('❌ Password reset error:', error);
+    
+    // Handle specific error cases for better UX
+    if (error.message?.includes('user-not-found')) {
+      throw new Error('No account found with this email address.');
+    } else if (error.message?.includes('invalid-email')) {
+      throw new Error('Please enter a valid email address.');
+    } else if (error.message?.includes('too-many-requests')) {
+      throw new Error('Too many requests. Please try again later.');
+    }
+    
     throw error;
   }
 };
