@@ -18,7 +18,7 @@ const { verifyToken } = require('../middleware/authmiddleware');
 const { 
   validateRegistration, 
   validateLogin,
-  validateForgotPassword  // 🔥 NEW: Add this
+  validateForgotPassword  
 } = require('../utils/authvalidation');
 
 // 📝 POST /api/auth/register - Register a new user

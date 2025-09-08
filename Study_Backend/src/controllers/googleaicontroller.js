@@ -35,7 +35,7 @@ const getAIExplanation = async (req, res) => {
 3. In-depth analysis or derivations
 4. Advanced connections to other topics
 5. 3 challenging practice questions
-Limit to 500 words.`;
+Limit to 400 words.`;
         break;
       
       case 'intermediate':
@@ -45,7 +45,7 @@ Limit to 500 words.`;
 3. Step-by-step process if applicable
 4. Key concepts and relationships
 5. 3 moderate practice questions
-Limit to 450 words.`;
+Limit to 350 words.`;
         break;
       
       default: // beginner
@@ -55,7 +55,7 @@ Limit to 450 words.`;
 3. Provide a step-by-step breakdown (if it's a process).
 4. Summarize the key points in under 5 bullet notes.
 5. End with 2 practice questions (without answers).
-Limit total explanation to about 400 words.`;
+Limit total explanation to about 300 words.`;
     }
 
     // Generate content
@@ -235,8 +235,47 @@ Keep it concise but comprehensive for quick review.`;
   }
 };
 
+// 📋 GENERATE QUIZ QUESTIONS
+const generateQuizQuestions = async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ success: false, message: 'Validation failed', errors: errors.array() });
+    }
+    const { subject, topic, subtopic = '', difficulty = 'Easy' } = req.body;
+    const userId = req.user.userId;
+
+    // Compose quiz generation prompt
+    const prompt = `
+Generate 5 multiple-choice questions for the topic "${topic}" (${subtopic}) in the subject "${subject}", with ${difficulty} difficulty.
+Format:
+1. Question?
+A) Option A
+B) Option B
+C) Option C
+D) Option D
+Answer: [Correct Option Letter]
+Only include the questions, options, and answers in the specified format.
+`;
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+    const result = await model.generateContent(prompt);
+    const quizText = result.response.text();
+
+    res.status(200).json({
+      success: true,
+      message: 'Quiz questions generated successfully',
+      data: { quiz: quizText, generatedAt: new Date().toISOString() }
+    });
+  } catch (error) {
+    console.error('Generate quiz error:', error);
+    res.status(500).json({ success: false, message: 'Failed to generate quiz' });
+  }
+};
+
+
 module.exports = {
   getAIExplanation,
   aiChat,
-  generateStudyNotes
+  generateStudyNotes,
+  generateQuizQuestions,
 };
