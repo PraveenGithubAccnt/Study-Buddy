@@ -73,38 +73,43 @@ else {
     }
   };
 
-  // ✅ Use the createSchedule API function
-  const handleSaveSchedule = async (formData) => {
-    try {
-      // The `date` object from the form contains both date and time
-      const scheduleData = {
-        subject: formData.subject,
-        topic: formData.topic,
-        // Format date to YYYY-MM-DD
-        date: formData.date.toISOString().split("T")[0],
-        // Format time to HH:MM
-        time: formData.date.toTimeString().split(" ")[0].substring(0, 5),
-        description: "", // Optional
-        priority: "medium", // Optional
-      };
+// ✅ Updated handleSaveSchedule function for home.jsx
+const handleSaveSchedule = async (formData) => {
+  try {
+    // The `date` object from the form contains both date and time
+    const scheduleData = {
+      subject: formData.subject,
+      topic: formData.topic,
+      // Format date to YYYY-MM-DD
+      date: formData.date.toISOString().split("T")[0],
+      // Format time to HH:MM
+      time: formData.date.toTimeString().split(" ")[0].substring(0, 5),
+      description: "", 
+      priority: "medium",
+    };
 
-      await createSchedule(scheduleData);
+    // Save to backend
+    const savedTask = await createSchedule(scheduleData);
 
-      Alert.alert("✅ Success!", "Your schedule has been saved.");
-      setShowForm(false);
-      await fetchTasks(); // Refresh the task list!
+    Alert.alert("✅ Success!", "Your schedule has been saved.");
+    setShowForm(false);
+    await fetchTasks(); 
+    // Schedule notification
+    await scheduleTaskNotification({
+      id: savedTask?.id, // Include task ID if available
+      subjectName: scheduleData.subject,
+      topic: scheduleData.topic,
+      date: scheduleData.date,
+      time: scheduleData.time,
+    });
 
-      // Schedule local notification
-      await scheduleTaskNotification({
-        subjectName: scheduleData.subject,
-        date: scheduleData.date,
-      });
+    console.log("📝 Task saved and notification scheduled:", scheduleData);
 
-    } catch (error) {
-      console.error("🔥 Error saving schedule:", error);
-      Alert.alert("❌ Error", error.message || "Something went wrong.");
-    }
-  };
+  } catch (error) {
+    console.error("🔥 Error saving schedule:", error);
+    Alert.alert("❌ Error", error.message || "Something went wrong.");
+  }
+};
 
   if (loading) {
     return (

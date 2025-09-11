@@ -28,6 +28,7 @@ export default function StudyScheduleForm({ visible, onClose, onSave }) {
         <Text className="text-xl font-bold mb-4">Create Study Schedule</Text>
         <TextInput
           placeholder="Enter subject"
+          placeholderTextColor="#9CA3AF" 
           className="border p-3 rounded-lg mb-3"
           value={subject}
           onChangeText={setSubject}
@@ -35,6 +36,7 @@ export default function StudyScheduleForm({ visible, onClose, onSave }) {
 
         <TextInput
           placeholder="Enter topic"
+         placeholderTextColor="#9CA3AF" 
           className="border p-3 rounded-lg mb-3"
           value={topic}
           onChangeText={setTopic}
