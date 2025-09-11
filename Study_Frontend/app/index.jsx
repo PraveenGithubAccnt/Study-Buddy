@@ -5,11 +5,34 @@ import {
   SafeAreaView,
   StatusBar,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import { useRouter } from "expo-router";
+import { useState } from "react";
+import { isAuthenticated } from "../api/firebaseauth";
 
 export default function LandingScreen() {
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
+
+  const handleLetsStart = async () => {
+    setLoading(true);
+    try {
+      // Check if user is already authenticated
+      const authResult = await isAuthenticated();
+      
+      if (authResult.isAuth) {
+        router.push("/(tabs)/home");
+      } else {
+        router.push("/loginscreen");
+      }
+    } catch (error) {
+      console.error("❌ Auth check failed:", error);
+      router.push("/loginscreen");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <View className="flex-1 bg-[#E6E6FA]">
@@ -45,12 +68,24 @@ export default function LandingScreen() {
 
           <View>
             <TouchableOpacity
-              className="bg-blue-600 py-3 px-12 rounded-full shadow"
-              onPress={() => router.push("/loginscreen")}
+              className={`py-3 px-12 rounded-full shadow ${
+                loading ? "bg-gray-400" : "bg-blue-600"
+              }`}
+              onPress={handleLetsStart}
+              disabled={loading}
             >
-              <Text className="text-base font-medium text-white">
-                Let's Start
-              </Text>
+              {loading ? (
+                <View className="flex-row items-center">
+                  <ActivityIndicator size="small" color="white" />
+                  <Text className="text-base font-medium text-white ml-2">
+                    Starting...
+                  </Text>
+                </View>
+              ) : (
+                <Text className="text-base font-medium text-white">
+                  Let's Start
+                </Text>
+              )}
             </TouchableOpacity>
           </View>
         </View>
